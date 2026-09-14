@@ -1,0 +1,125 @@
+{
+  "info": {
+    "name": "Weather Digest",
+    "description": "Геокодинг города и прогноз погоды по координатам через Open-Meteo API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "geocodingBaseUrl", "value": "https://geocoding-api.open-meteo.com/v1" },
+    { "key": "forecastBaseUrl", "value": "https://api.open-meteo.com/v1" },
+    { "key": "city", "value": "Красноярск" },
+    { "key": "lat", "value": "56.0184" },
+    { "key": "lon", "value": "92.8672" }
+  ],
+  "item": [
+    {
+      "name": "Geocoding — успешный запрос",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{geocodingBaseUrl}}/search?name={{city}}&count=1&language=ru&format=json",
+          "host": ["{{geocodingBaseUrl}}"],
+          "path": ["search"],
+          "query": [
+            { "key": "name", "value": "{{city}}" },
+            { "key": "count", "value": "1" },
+            { "key": "language", "value": "ru" },
+            { "key": "format", "value": "json" }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK — город найден",
+          "originalRequest": {
+            "method": "GET",
+            "url": {
+              "raw": "{{geocodingBaseUrl}}/search?name=Красноярск&count=1&language=ru&format=json"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"results\": [\n    {\n      \"id\": 1502026,\n      \"name\": \"Красноярск\",\n      \"latitude\": 56.0184,\n      \"longitude\": 92.8672,\n      \"country\": \"Россия\",\n      \"country_code\": \"RU\",\n      \"timezone\": \"Asia/Krasnoyarsk\",\n      \"admin1\": \"Красноярский край\"\n    }\n  ],\n  \"generationtime_ms\": 0.35\n}"
+        },
+        {
+          "name": "200 OK — город не найден (пустой results)",
+          "originalRequest": {
+            "method": "GET",
+            "url": {
+              "raw": "{{geocodingBaseUrl}}/search?name=Абырвалг&count=1&language=ru&format=json"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"generationtime_ms\": 0.2\n}"
+        },
+        {
+          "name": "400 Bad Request — некорректные параметры",
+          "originalRequest": {
+            "method": "GET",
+            "url": {
+              "raw": "{{geocodingBaseUrl}}/search?name=&count=1&language=ru&format=json"
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"error\": true,\n  \"reason\": \"Value 'name' cannot be empty\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Forecast — прогноз по координатам",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{forecastBaseUrl}}/forecast?latitude={{lat}}&longitude={{lon}}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&forecast_days=3&timezone=auto",
+          "host": ["{{forecastBaseUrl}}"],
+          "path": ["forecast"],
+          "query": [
+            { "key": "latitude", "value": "{{lat}}" },
+            { "key": "longitude", "value": "{{lon}}" },
+            { "key": "daily", "value": "temperature_2m_max,temperature_2m_min,precipitation_sum" },
+            { "key": "forecast_days", "value": "3" },
+            { "key": "timezone", "value": "auto" }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK — прогноз получен",
+          "originalRequest": {
+            "method": "GET",
+            "url": {
+              "raw": "{{forecastBaseUrl}}/forecast?latitude=56.0184&longitude=92.8672&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&forecast_days=3&timezone=auto"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"latitude\": 56.02,\n  \"longitude\": 92.87,\n  \"timezone\": \"Asia/Krasnoyarsk\",\n  \"daily\": {\n    \"time\": [\"2026-09-15\", \"2026-09-16\", \"2026-09-17\"],\n    \"temperature_2m_max\": [14.6, 13.2, 11.8],\n    \"temperature_2m_min\": [5.3, 4.1, 3.0],\n    \"precipitation_sum\": [0.0, 0.8, 2.1]\n  }\n}"
+        },
+        {
+          "name": "400 Bad Request — некорректные координаты",
+          "originalRequest": {
+            "method": "GET",
+            "url": {
+              "raw": "{{forecastBaseUrl}}/forecast?latitude=999&longitude=999&daily=temperature_2m_max&forecast_days=3&timezone=auto"
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"error\": true,\n  \"reason\": \"Latitude must be in range of -90 to 90°\"\n}"
+        }
+      ]
+    }
+  ]
+}
