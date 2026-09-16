@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file=.env src/index.js",
-    "dev": "node --watch --env-file=.env src/index.js"
+    "dev": "node --watch --env-file=.env src/index.js",
+    "example": "node --env-file=.env src/index.js --city \"Нижний Новгород,Париж\" --days 3"
   }
 }

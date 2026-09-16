@@ -24,7 +24,7 @@ const getForecastByCity = async (cityName, days, { noCache = false, readCache, s
   if (!trimmedName) throw new Error('Название города не должно быть пустым')
 
   if (!noCache && readCache) {
-    const cached = await readCache(trimmedName)
+    const cached = await readCache(trimmedName, days)
     if (cached) return cached
   }
 
